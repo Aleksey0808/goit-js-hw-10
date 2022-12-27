@@ -25,13 +25,13 @@ function textInput(e) {
   }
 }
 
-fetchCountries(searchCountry.trim())
-  .then(country => {
-    console.log(country);
-    if (country.length > 10) {
-      Notify.info('Too many matches found. Please enter a more specific name.');
-      refs.countryInfo.innerHTML = '';
-      refs.countryList.innerHTML = '';
-    }
-  })
-  .catch(error => console.log(error));
+// fetchCountries(searchCountry.trim())
+//   .then(country => {
+//     console.log(country);
+//     if (country.length > 10) {
+//       Notify.info('Too many matches found. Please enter a more specific name.');
+//       refs.countryInfo.innerHTML = '';
+//       refs.countryList.innerHTML = '';
+//     }
+//   })
+//   .catch(error => console.log(error));
