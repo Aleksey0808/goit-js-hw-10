@@ -16,6 +16,7 @@ refs.inputEl.addEventListener('input', debounce(textInput, DEBOUNCE_DELAY));
 
 function textInput(e) {
   e.preventDefault();
+
   let searchCountry = refs.inputEl.value;
   if (searchCountry.trim() === '') {
     refs.countryInfo.innerHTML = '';
@@ -33,4 +34,4 @@ fetchCountries(searchCountry.trim())
       refs.countryList.innerHTML = '';
     }
   })
-  .catch(error => error);
+  .catch(error => console.log(error));
