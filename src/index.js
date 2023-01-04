@@ -1,7 +1,8 @@
 import './css/styles.css';
 import debounce from 'lodash.debounce';
-import fetchCountries from './js/fetchCountries';
-import Notify from 'notiflix';
+import { fetchCountries } from './js/fetchCountries';
+import { showCountryList, showCountryCard } from './js/marcup';
+import { Notify } from 'notiflix';
 
 const refs = {
   inputEl: document.querySelector('#search-box'),
@@ -10,28 +11,47 @@ const refs = {
 };
 
 const DEBOUNCE_DELAY = 300;
-let searchCountry = '';
 
-refs.inputEl.addEventListener('input', debounce(textInput, DEBOUNCE_DELAY));
+refs.inputEl.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 
-function textInput(e) {
+function onSearch(e) {
   e.preventDefault();
 
-  let searchCountry = refs.inputEl.value;
-  if (searchCountry.trim() === '') {
+  let searchCountry = refs.inputEl.value.trim();
+
+  if (searchCountry === '') {
     refs.countryInfo.innerHTML = '';
     refs.countryList.innerHTML = '';
     return;
   }
-}
 
-// fetchCountries(searchCountry.trim())
-//   .then(country => {
-//     console.log(country);
-//     if (country.length > 10) {
-//       Notify.info('Too many matches found. Please enter a more specific name.');
-//       refs.countryInfo.innerHTML = '';
-//       refs.countryList.innerHTML = '';
-//     }
-//   })
-//   .catch(error => console.log(error));
+  fetchCountries(searchCountry)
+    .then(countries => {
+      if (countries.length > 10) {
+        Notify.info(
+          'Too many matches found. Please enter a more specific name.'
+        );
+        refs.countryInfo.innerHTML = '';
+        refs.countryList.innerHTML = '';
+        return;
+      }
+
+      if (countries.length > 1 && countries.length <= 10) {
+        const markup = countries.map(country => showCountryList(country));
+        refs.countryList.innerHTML = markup.join('');
+        refs.countryInfo.innerHTML = '';
+      }
+
+      if (countries.length === 1) {
+        const cardMarcup = countries.map(country => showCountryCard(country));
+        refs.countryList.innerHTML = '';
+        refs.countryInfo.innerHTML = cardMarcup.join('');
+      }
+    })
+    .catch(error => {
+      Notify.failure('Oops, there is no country with that name');
+      refs.countryInfo.innerHTML = '';
+      refs.countryList.innerHTML = '';
+      return error;
+    });
+}
